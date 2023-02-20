@@ -7,7 +7,7 @@ module:
   # Hugo Vitae theme as a module
   - path: "github.com/dataCobra/hugo-vitae"
     disable: false
-    
+
 # theme: hugo-vitae
 params:
   homepage: false
@@ -27,6 +27,12 @@ params:
     - name: Github
       icon: fab fa-github
       url: 'https://github.com/bryankaraffa'
+    - name: LinkedIn
+      icon: fab fa-linkedin
+      url: 'https://www.linkedin.com/in/bryankaraffa'
+    - name: Ham Radio
+      icon: fas fa-walkie-talkie
+      url: 'https://www.qrz.com/db/KN6YDZ'
 menu:
   main:
     - name: Posts

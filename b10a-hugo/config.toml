@@ -1,0 +1,71 @@
+baseURL = 'https://b10a.co/'
+languageCode = 'en-us'
+title = 'b10a.co'
+theme = "hugo-vitae"
+
+
+# Hugo-Vitae Params
+# https://github.com/dataCobra/hugo-vitae/blob/main/examples/config.toml
+[params]
+	# Use homepage.md instead of a list of posts
+	homepage = false
+
+	# Add meta keywords in head part (Site Keywords or Tags of Page)
+	keywords = ["b10a","bryankaraffa","Bryan Karaffa"]
+
+	# Add meta description in head part
+	description = "A blog for myself about nothing in particular"
+
+	# Add pagetitle to homepage <title> tag
+	pagetitle = "A blog for myself about nothing in particular"
+
+	# Add a subtitle to your website
+	subtitle = "A blog for myself about nothing in particular"
+
+	# Optional 80x80 avatar image.
+	#avatar = "img/vitae.jpg"
+
+	# Optional favicons for website
+	#favicon = true
+
+	# Add list of sections that should show up on the homepage
+	mainSections = ["posts"]
+
+	# Add list of Sections/Types that should no be considered by RSS
+	#nofeedSections = ["post"]
+
+	# Deactivate Taxonomies for specific page types
+	#disableTaxoTypes = [""]
+
+	# Custom CSS applied to default styles. (Path could be "static/css/")
+	#customcss = "css/custom.css"
+
+	# Show reading time on a post
+	readingTime = true
+
+	# Show word count on a post
+	wordCount = true
+
+	# Show author on a post (groups with readingTime and wordCount)
+	hideAuthor = true
+
+# Navigation
+[[menu.main]]
+name = "Blog"
+url = "/"
+weight = 1
+
+[[menu.main]]
+name = "Categories"
+url = "/categories"
+weight = 2
+
+[[menu.main]]
+name = "Tags"
+url = "/tags"
+weight = 3
+
+[[params.social]]
+name = "Github"
+icon = "fab fa-github"
+url = "https://github.com/bryankaraffa"

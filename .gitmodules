@@ -1,0 +1,6 @@
+[submodule "quickstart/themes/ink-free"]
+	path = quickstart/themes/ink-free
+	url = git@github.com:chollinger93/ink-free.git
+[submodule "quickstart/themes/hugo-vitae"]
+	path = quickstart/themes/hugo-vitae
+	url = git@github.com:dataCobra/hugo-vitae.git

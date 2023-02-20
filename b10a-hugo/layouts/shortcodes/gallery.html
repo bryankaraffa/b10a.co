@@ -1,0 +1,16 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.1/css/lightbox.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.1/js/lightbox.min.js"></script>
+
+{{ $image := (.Page.Resources.ByType "image") }}
+{{ $lightbox := .Get "lightbox" }}
+<div class="gallery">
+{{ with $image }}
+    {{ range . }}
+    {{ $resized := .Fill "320x320 q50" }}
+    <a width="320px" height="320px" style="display: inline-block" href="{{ .Permalink }}" data-lightbox="{{ $lightbox }}">
+        <img src="{{ $resized.Permalink }}" />
+    </a>
+    {{ end }}
+{{ end }}
+</div>

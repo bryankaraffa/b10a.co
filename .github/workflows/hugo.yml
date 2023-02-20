@@ -54,8 +54,6 @@ jobs:
           HUGO_ENV: production
         run: |
           hugo \
-            -s b10a-hugo \
-            -d `pwd`/public \
             --minify \
             --baseURL "${{ steps.pages.outputs.base_url }}/"
       - name: Upload artifact

@@ -1,0 +1,40 @@
+baseURL: 'https://b10a.co/'
+languageCode: en-us
+title: b10a.co
+
+module:
+  imports:
+  # Hugo Vitae theme as a module
+  - path: "github.com/dataCobra/hugo-vitae"
+    disable: false
+    
+# theme: hugo-vitae
+params:
+  homepage: false
+  keywords:
+    - b10a
+    - bryankaraffa
+    - Bryan Karaffa
+  description: A blog for myself about nothing in particular
+  pagetitle: A blog for myself about nothing in particular
+  subtitle: A blog for myself about nothing in particular
+  mainSections:
+    - posts
+  readingTime: true
+  wordCount: true
+  hideAuthor: true
+  social:
+    - name: Github
+      icon: fab fa-github
+      url: 'https://github.com/bryankaraffa'
+menu:
+  main:
+    - name: Posts
+      url: /
+      weight: 1
+    - name: Categories
+      url: /categories
+      weight: 2
+    - name: Tags
+      url: /tags
+      weight: 3

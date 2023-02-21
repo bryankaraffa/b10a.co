@@ -9,20 +9,33 @@ module:
     disable: false
 
 # theme: hugo-vitae
+# https://github.com/dataCobra/hugo-vitae/blob/main/FEATURES.md#site-configuration-options-configtoml
 params:
+  # Enable/Disable homepage use instead of a list
   homepage: false
+  # Add meta keywords in head part (Site Keywords or Tags of Page)
   keywords:
     - b10a
     - bryankaraffa
     - Bryan Karaffa
+    - WRUL988
+    - KN6YDZ
+  # Add meta description in head part (Site Description or Description of Page)
   description: A blog for myself about nothing in particular
+   # Add pagetitle
   pagetitle: A blog for myself about nothing in particular
+  # Add a subtitle
   subtitle: A blog for myself about nothing in particular
+  # Add list of sections that should show up on the homepage
   mainSections:
     - posts
+  # Show reading time for a post
   readingTime: true
+  # Show word count for a post
   wordCount: true
+  # Hide author for a post (there will only be one author)
   hideAuthor: true
+  # Add different social links
   social:
     - name: Github
       icon: fab fa-github

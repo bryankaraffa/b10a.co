@@ -15,8 +15,8 @@ In the US, if you tune to `144.390MHz` you can hear what APRS traffic sounds lik
 I wanted to get started transmitting location via APRS, but I didn't want to spend a lot of money on equipment.  I found an app called [APRSDroid](https://github.com/ge0rg/aprsdroid) which allows you to use an Android phone to read/send APRS packets in conjuction with a radio.  The app costs a few dollars from the Google Play store, but it is also possible to [download the APK](https://aprsdroid.org/download/) for manual installation which is free.
 
 Here's what I used:
- - A Radio Receiver ([Baofeng UV-5RA](https://amzn.to/3W9CrVu)) 
- - An Audio Interface Cable ([BTECH APRS-K1 Cable (affiliate link)](https://amzn.to/3GIFH4u))
+ - A Radio Receiver {{< amzn-affiliate text="Baofeng UV-5RA" link="https://amzn.to/3W9CrVu" >}}
+ - An Audio Interface Cable {{< amzn-affiliate text="BTECH APRS-K1 Cable" link="https://amzn.to/3GIFH4u" >}}
  - An Android device that has a headphone jack (Moto G6)
 
 ## Setting up the radio

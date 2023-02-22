@@ -50,10 +50,12 @@ menu:
   main:
     - name: Posts
       url: /
-      weight: 1
-    - name: Categories
-      url: /categories
-      weight: 2
+      weight: -3
+    # - name: Categories
+    #   url: /categories
+    #   weight: -2
     - name: Tags
       url: /tags
-      weight: 3
+      weight: -1
+    # - name: KN6YDZ
+    #   url: /kn6ydz

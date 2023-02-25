@@ -8,6 +8,8 @@ module:
   - path: "github.com/dataCobra/hugo-vitae"
     disable: false
 
+googleAnalytics: "G-0R5DJK1S07"
+
 # theme: hugo-vitae
 # https://github.com/dataCobra/hugo-vitae/blob/main/FEATURES.md#site-configuration-options-configtoml
 params:

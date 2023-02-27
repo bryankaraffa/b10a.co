@@ -8,6 +8,8 @@ module:
   - path: "github.com/dataCobra/hugo-vitae"
     disable: false
 
+# Most Templates support Google Analytics Internal Template
+# https://gohugo.io/templates/internal/#google-analytics
 googleAnalytics: "G-0R5DJK1S07"
 
 # theme: hugo-vitae

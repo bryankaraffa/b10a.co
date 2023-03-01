@@ -10,7 +10,7 @@ module:
 
 # Most Templates support Google Analytics Internal Template
 # https://gohugo.io/templates/internal/#google-analytics
-googleAnalytics: "G-0R5DJK1S07"
+# googleAnalytics: "G-0R5DJK1S07" # Disabled with hugo-vitae because not working with new gtag snippet
 
 # theme: hugo-vitae
 # https://github.com/dataCobra/hugo-vitae/blob/main/FEATURES.md#site-configuration-options-configtoml

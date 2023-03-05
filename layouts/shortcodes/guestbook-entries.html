@@ -1,0 +1,20 @@
+<section class="guestbook" id="guestbook-section">
+  <!-- Existing guestbook -->
+  <small><i>Guestbook entries are sorted by date, most recent at top to oldest at the bottom</i></small>
+  <div class="guestbook__existing">
+  {{ if .Site.Data.guestbook }}
+    {{ range sort .Site.Data.guestbook "date" "desc"  }}
+    <blockquote>
+      <!-- htmlEscape the content just in case there are attempted injections -->
+      <span class="post-header">{{ htmlEscape .message }}</span><br/>
+      <!-- Entry metadata with date formatted as "January 6, 2006" -->
+      <span class="post-meta">- <b>{{ htmlEscape .name }}</b> on {{ time.Format "January 2, 2006" .date }}</span><br/>
+    </blockquote>
+    {{ end }}
+    {{ else }}
+    <blockquote>
+      No guestbook entries yet -- you could be the first!
+    </blockquote>
+    {{ end }}
+  </div>
+</section>

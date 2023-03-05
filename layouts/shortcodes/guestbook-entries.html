@@ -6,9 +6,9 @@
     {{ range sort .Site.Data.guestbook "date" "desc"  }}
     <blockquote>
       <!-- htmlEscape the content just in case there are attempted injections -->
-      <span class="post-header">{{ htmlEscape .message }}</span><br/>
+      <span class="post-header">{{ safeHTML .message }}</span><br/>
       <!-- Entry metadata with date formatted as "January 6, 2006" -->
-      <span class="post-meta">- <b>{{ htmlEscape .name }}</b> on {{ time.Format "January 2, 2006" .date }}</span><br/>
+      <span class="post-meta">- <b>{{ safeHTML .name }}</b> on {{ time.Format "January 2, 2006" .date }}</span><br/>
     </blockquote>
     {{ end }}
     {{ else }}

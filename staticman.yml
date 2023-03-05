@@ -10,7 +10,7 @@ guestbook:
   allowedFields: ["name", "message"]
 
 
-  allowedOrigins: ["localhost", "b10a.co"]
+  allowedOrigins: ["b10a.co"]
 
   # (*) REQUIRED
   #

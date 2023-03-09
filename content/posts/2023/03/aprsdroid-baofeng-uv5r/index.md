@@ -2,10 +2,10 @@
 title: "Using APRSDroid with Baofeng UV-5R"
 date: 2023-03-01
 draft: false
-tags: [amateur radio, aprs, open source, baofeng]
+tags: [amateur radio, aprs, open source, baofeng, cheap]
 ---
 
-I have recently been interested in getting into amateur radio.  There are a lot of aspects to amateur radio, but one thing that peaked by interest was APRS (Automatic Packet Reporting System).  
+I have recently been interested in getting into amateur radio.  There are a lot of aspects to amateur radio, but one thing that peaked by interest was APRS (Automatic Packet Reporting System).
 
 > **APRS** stands for Automatic Packet Reporting System, a digital communication system used by radio amateurs. It can be used to send your position, share telemetry (a weather station for example), and even send text messages to other hams.
 

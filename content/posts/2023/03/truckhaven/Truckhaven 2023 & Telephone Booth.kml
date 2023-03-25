@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document id="aprs">
+	<name>Truckhaven 2023 &amp; Telephone Booth</name>
+	<description>Trip from SB to Truckhaven including the APRS beaconing atop Telephone Booth hill</description>
+	<gx:CascadingStyle kml:id="__managed_style_208D84DBF1283A130962">
+		<Style>
+			<IconStyle>
+				<scale>1.2</scale>
+				<Icon>
+					<href>https://earth.google.com/earth/rpc/cc/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>3</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<gx:CascadingStyle kml:id="__managed_style_1AEC16CE3B283A130962">
+		<Style>
+			<IconStyle>
+				<Icon>
+					<href>https://earth.google.com/earth/rpc/cc/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>2</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="__managed_style_04916DC9C0283A130962">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#__managed_style_1AEC16CE3B283A130962</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#__managed_style_208D84DBF1283A130962</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="t7548244">
+		<IconStyle>
+			<scale>0.75</scale>
+			<Icon>
+				<href>files/sym/f24/p3ep3e.png</href>
+			</Icon>
+		</IconStyle>
+		<LabelStyle>
+			<color>ffa8ff00</color>
+			<scale>0.75</scale>
+		</LabelStyle>
+		<LineStyle>
+			<color>fff0ff00</color>
+			<width>2</width>
+		</LineStyle>
+	</Style>
+	<Placemark id="0A38671DDD2837497A99">
+		<name>KN6YDZ</name>
+		<Snippet maxLines="2">Hello world!</Snippet>
+		<description><![CDATA[<a href='http://aprs.fi/?call=KN6YDZ'>[click here to track on aprs.fi]</a><br />
+2023-03-19 00:25:16z<br />
+<span style='color:#0a7100; font-style:italic;'>Hello world!</span><br />]]></description>
+		<styleUrl>#t7548244</styleUrl>
+		<MultiGeometry>
+			<Point>
+				<coordinates>-116.0145,33.29767,0</coordinates>
+			</Point>
+			<LineString>
+				<tessellate>1</tessellate>
+				<coordinates>
+					-119.69733,34.41033,0 -119.0865,34.22033,0 -118.84517,34.17083,0 -118.562,34.17333,0 -118.53267,34.17217,0 -118.367,34.153,0 -117.70567,34.11967,0 -117.67167,34.1345,0 -117.63067,34.13467,0 -117.6095,34.13483,0 -117.56767,34.13633,0 -117.45767,34.13617,0 -117.34233,34.13467,0 -117.20083,34.07233,0 -117.15967,34.04983,0 -117.12717,34.02817,0 -117.10233,34.0205,0 -117.06683,34.00717,0 -116.84167,33.92883,0 -116.73417,33.9245,0 -116.69867,33.92367,0 -116.679,33.92233,0 -116.395,33.80967,0 -116.38533,33.80467,0 -116.353,33.785,0 -116.17617,33.70183,0 -116.1385,33.6495,0 -116.11967,33.61967,0 -116.10033,33.52783,0 -116.0965,33.5105,0 -116.09167,33.5005,0 -116.019,33.35283,0 -116.01767,33.35333,0 -115.9965,33.29367,0 -115.9965,33.2935,0 -115.99617,33.294,0 -115.99633,33.29433,0 -115.99733,33.29517,0 -115.99783,33.2955,0 -115.99633,33.29367,0 -115.99583,33.294,0 -115.998,33.29633,0 -115.998,33.29783,0 -116.00083,33.29833,0 -116.001,33.2985,0 -116.00117,33.2985,0 -116.00183,33.299,0 -116.00433,33.30167,0 -116.005,33.302,0 -116.00567,33.303,0 -116.00817,33.30217,0 -116.01617,33.303,0 -116.01633,33.30283,0 -116.0165,33.30283,0 -116.01667,33.30283,0 -116.02817,33.30233,0 -116.03067,33.30233,0 -116.03017,33.3025,0 -116.03167,33.3015,0 -116.01983,33.2955,0 -116.02,33.2955,0 -116.01983,33.29533,0 -116.01833,33.2955,0 -116.017,33.2955,0 -115.99717,33.288,0 -115.997,33.28333,0 -115.997,33.28533,0 -115.99633,33.29367,0 -115.9965,33.29367,0 -115.99633,33.29383,0 -115.99633,33.29417,0 -116.00917,33.29767,0 -116.00983,33.29833,0 -116.01033,33.29883,0 -116.01433,33.29767,0 -116.01417,33.29783,0 -116.0145,33.29767,0 
+				</coordinates>
+			</LineString>
+		</MultiGeometry>
+	</Placemark>
+	<Placemark id="04FC6DCE90283A129623">
+		<name>Path to Telephone Booth</name>
+		<LookAt>
+			<longitude>-116.0313030514574</longitude>
+			<latitude>33.3019490338952</latitude>
+			<altitude>66.85143818965375</altitude>
+			<heading>69.57272226103272</heading>
+			<tilt>59.43019368390564</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>242.9384645149548</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_04916DC9C0283A130962</styleUrl>
+		<LineString>
+			<coordinates>
+				-116.0315515057736,33.30242494579619,64.70702547291796 -116.0314008182325,33.30246877198137,64.89174359920479 -116.0312692384162,33.30244790600901,66.08365766560986 -116.031144035278,33.30245132510847,68.67690710070454 -116.0310071704246,33.30240839178487,72.6467467049458 -116.0308897447409,33.30236536648525,75.31033979194738 -116.0307982983042,33.30238893785969,76.80488845426451 -116.0308412262814,33.30256772627754,76.66683896892823 -116.0307812967296,33.30264134328546,77.54496155028782 -116.0303978634196,33.30262952597926,88.29256189436252 -116.0301198311232,33.30241517111773,91.6886165998752 -116.0299591632076,33.30197380709988,88.46929165109617 -116.0295011631352,33.30173763667485,89.17243343807401 -116.029323724348,33.30153394137426,91.90465653557183 -116.0295833952896,33.30145117851846,91.28006158299873 -116.0298504132027,33.30183120854048,88.34635725667322 -116.0303171388308,33.30186171581653,90.90887067552805 -116.0304015172097,33.30180410716924,89.80405361381398 -116.0302840434598,33.30165924321594,88.88899431096414 -116.0302984362701,33.30160547769933,87.15288858504508 -116.0306357607801,33.30136455744203,72.71384253208323 -116.0311339050992,33.30166272481334,68.49605310207914 -116.0315312006092,33.30147906575277,67.52079702135343 -116.031791120977,33.30165547281037,66.83637054463304 
+			</coordinates>
+		</LineString>
+	</Placemark>
+</Document>
+</kml>

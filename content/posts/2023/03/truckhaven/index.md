@@ -12,3 +12,5 @@ One of the highlights was driving to the top of phone book hill for the first ti
 {{<youtube id="DH6qpusbWrA" title="Truckhaven 2023 - Rock Buggy Notch up the left line" >}}
 
 {{<youtube id="9u5W6DYOdKg" title="Truckhaven 2023 - Rock Buggy Notch down the right line">}}
+  
+{{<youtube id="HzJImD2kZUE" title=" Truckhaven 2023 - Rock Buggy Notch attempting up the right line from the top ">}}

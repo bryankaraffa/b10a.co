@@ -2,7 +2,7 @@
 title: "Using APRSDroid with Baofeng UV-5R"
 date: 2023-03-01
 draft: false
-tags: [amateur radio, aprs, open source, baofeng, cheap]
+tags: [amateur radio, aprs, open source, baofeng, cheap, guide]
 ---
 
 I have recently been interested in getting into amateur radio.  There are a lot of aspects to amateur radio, but one thing that peaked by interest was APRS (Automatic Packet Reporting System).
@@ -70,4 +70,3 @@ If everything is setup correctly, and you are within range of APRS receivers (iG
 
 APRS was originally designed to be a local, tactical, real-time two-way communications system -- today with the help from APRS Internet Gateways (iGates) -- all local information is injected into the APRS Internet Service: https://aprs.fi/
 
-{{<gallery>}}

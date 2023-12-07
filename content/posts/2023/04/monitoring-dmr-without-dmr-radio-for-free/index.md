@@ -1,7 +1,7 @@
 ---
 title: "Monitoring DMR without a DMR Radio (for free)"
 date: 2023-04-18
-tags: [amateur radio, kn6ydz, dmr]
+tags: [amateur radio, kn6ydz, dmr, cheap, free, guide]
 ---
 
 I recently purchased myself a [Radioddity DB25-D](https://amzn.to/3l0IL5p) radio -- primarily for it's built-in GPS and APRS features -- but it also  supports DMR.  I was not planning to use this, but I ended up visiting the [Santa Barbara Amateur Radio Club HQ](https://www.sbarc.org/) and there was Brian K6BPM who planted a seed and got me investigating DMR.

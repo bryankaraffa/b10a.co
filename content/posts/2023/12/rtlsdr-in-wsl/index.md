@@ -1,7 +1,7 @@
 ---
 title: "Using RTL-SDR USB devices in WSL on Windows"
 date: 2023-12-06
-tags: [amateur radio, kn6ydz, rtl-sdr, wsl, linux, windows, openwebrx]
+tags: [amateur radio, kn6ydz, rtl-sdr, wsl, linux, windows, openwebrx, open source, aprs, cheap, docker, guide]
 ---
 
 There is a way to connect USB to WSL2.  Here's a loosely noted outline for how I was able to get my RTL-SDR USB device working in a Docker container on WSL2 running on a Windows 11 Host.  The initial guidance docs were actually available from [Microsoft for Connecting USB in WSL](https://learn.microsoft.com/en-us/windows/wsl/connect-usb) but have tried to simplify the steps and provide a format that is easier to follow.

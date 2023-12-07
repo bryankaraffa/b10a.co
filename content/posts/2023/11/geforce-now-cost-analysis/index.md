@@ -2,7 +2,7 @@
 title: "A Cost Analysis of GeForce NOW and Game Streaming versus \"Bare Metal\" Laptop or PC for Gaming"
 date: 2023-11-13
 draft: false
-tags: ["gaming"]
+tags: [gaming, cloud, opinion, windows, linux]
 ---
 
 # Introduction

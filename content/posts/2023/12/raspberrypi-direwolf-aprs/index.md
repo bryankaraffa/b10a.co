@@ -1,7 +1,7 @@
 ---
 title: "Using Raspberry Pi, RTL-SDR, and Direwolf for cheap APRS receiver"
 date: 2023-12-01
-tags: [amateur radio, aprs, open source, baofeng, raspberry pi, rtl-sdr, direwolf]
+tags: [amateur radio, aprs, open source, baofeng, raspberry pi, rtl-sdr, direwolf, guide, linux, open source, cheap, guide]
 ---
 
 ## Install RTL-SDR and Direwolf

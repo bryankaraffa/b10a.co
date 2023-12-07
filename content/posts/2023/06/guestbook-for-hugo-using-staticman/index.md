@@ -1,7 +1,7 @@
 ---
 title: "Adding a Guestbook to Hugo website using Staticman"
 date: 2023-06-01
-tags: [hugo,staticman,open source,free]
+tags: [hugo,staticman,open source,free,cheap,guide]
 ---
 This website is powered by Hugo which is a static site generator, and static websites typically do not support user-generated content like forms (which require server-side handling).    In some cases when someone visits a website, they may also want to acknowledge their visit.  I decided to build a Guestbook to explore adding user-generated content to this otherwise static website.
 

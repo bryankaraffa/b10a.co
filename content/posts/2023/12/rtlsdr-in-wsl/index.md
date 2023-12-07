@@ -43,7 +43,7 @@ PS C:\Users\bk> usbipd bind -b 6-1
 ## Attach USB Devices to WSL
 
 ```powershell
-PS C:\Users\bryan> usbipd attach --busid 6-1 --wsl "Debian"
+PS C:\Users\bk> usbipd attach --busid 6-1 --wsl "Debian"
 usbipd: info: Selecting a specific distribution is no longer required. Please file an issue if you believe that the default selection mechanism is not working for you.
 usbipd: info: Using WSL distribution 'Debian' to attach; the device will be available in all WSL 2 distributions.
 usbipd: info: Using IP address 172.31.64.1 to reach the host.

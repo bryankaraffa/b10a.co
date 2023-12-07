@@ -1,7 +1,6 @@
 ---
 title: "Using RTL-SDR USB devices in WSL on Windows"
 date: 2023-12-06
-draft: true
 tags: [amateur radio, kn6ydz, rtl-sdr, wsl, linux, windows, openwebrx]
 ---
 

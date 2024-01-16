@@ -1,8 +1,7 @@
 ---
 title: "Using docker-adsb-ultrafeeder as a headless rtl-sdr+docker solution"
-date: 2024-01-08
-draft: true
-tags: [amateur radio, kn6ydz, docker, rtl-sdr, open source, ionosphere, adsb, ads-b, homelab]
+date: 2024-01-15
+tags: [amateur radio, kn6ydz, docker, rtl-sdr, open source, adsb, ads-b, homelab]
 ---
 
 I am using a fairly odd setup, so there's some assumptions that are made when I write this post:
@@ -82,7 +81,7 @@ Because I've already figured out how to use `rtl-sdr` devices in containers, I d
     volumes:
       - ./ultrafeeder/globe_history:/var/globe_history
       - ./ultrafeeder/graphs1090:/var/lib/collectd
-      - ./ultrafeeder/diskstats:/proc/diskstats:ro
+      - /proc/diskstats:/proc/diskstats:ro
     tmpfs:
       - /run:exec,size=256M
       - /tmp:size=128M

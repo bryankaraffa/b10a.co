@@ -8,6 +8,10 @@ module:
   - path: "github.com/dataCobra/hugo-vitae"
     disable: false
 
+# Enable GitInfo
+# https://gohugo.io/variables/git/#the-gitinfo-namespace
+enableGitInfo: true
+
 # Most Templates support Google Analytics Internal Template
 # https://gohugo.io/templates/internal/#google-analytics
 # googleAnalytics: "G-0R5DJK1S07" # Disabled with hugo-vitae because not working with new gtag snippet
@@ -72,3 +76,7 @@ menu:
     #   url: /kn6ydz
     - name: Guestbook
       url: /guestbook
+
+outputs:
+  home: ["HTML", "RSS"]
+  page: ["HTML", "RSS"]

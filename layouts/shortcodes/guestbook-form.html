@@ -24,9 +24,11 @@
   // On Submit action to check if the email field is filled out
   function submitForm() {
     if (document.getElementById(elementId).value || document.getElementById(elementId).value.length > 0) {
+      window.clarity("event", "guestbook-robot");
       // Use JS to hide the form and show a message
       document.getElementById("guestbook-form").innerHTML = "<p>Thank you for your submission! Your message will be reviewed and posted shortly.</p>";
     } else {
+      window.clarity("event", "guestbook-submit");
       // If the email field is not filled out, then do a thing
       document.getElementById("guestbook-form").submit();
     }

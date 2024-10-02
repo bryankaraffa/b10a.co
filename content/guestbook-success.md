@@ -1,5 +1,5 @@
 ---
-title: "Guestbook Submission Sucessful"
+title: "Guestbook Submission Successful"
 date: 2023-03-01
 draft: false
 type: page

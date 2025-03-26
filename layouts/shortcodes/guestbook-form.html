@@ -4,6 +4,9 @@
   <label>Name or Callsign <input name="fields[name]" type="text" alt="Name or Callsign" placeholder="Joe Bob"></label><br/>
   <label>Optional Message <br/><textarea name="fields[message]" alt="Message" style="width: 90%; min-width: 100px;" placeholder="Hello!"></textarea></label><br/>
   <input type="text" name="email" id="email" placeholder="Your email" autocomplete="off" tabindex="-1">
+  <div class="g-recaptcha" data-sitekey="{{ .Site.Params.reCaptcha.siteKey }}"></div>
+  <input type="hidden" name="options[reCaptcha][siteKey]" value="{{ .Site.Params.reCaptcha.siteKey }}">
+  <input type="hidden" name="options[reCaptcha][secret]" value="{{ .Site.Params.reCaptcha.secret }}">
   <button type="submit" onclick="submitForm()">
     Submit
   </button>
@@ -13,6 +16,7 @@
 </i></small><br />
 
 <!-- Attempt to outsmart the robots -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
   var elementId = ["e", "m", "a", "i", "l"].join("");
   // On Load move a particular form element so it's hidden for carbon-based lifeforms
@@ -24,6 +28,7 @@
   // On Submit action to check if the email field is filled out
   function submitForm() {
     if (document.getElementById(elementId).value || document.getElementById(elementId).value.length > 0) {
+      window.clarity("upgrade", "guestbook-robot");
       window.clarity("event", "guestbook-robot");
       // Use JS to hide the form and show a message
       document.getElementById("guestbook-form").innerHTML = "<p>Thank you for your submission! Your message will be reviewed and posted shortly.</p>";

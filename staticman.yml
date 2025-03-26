@@ -73,3 +73,12 @@ guestbook:
   # Names of required fields. If any of these isn't in the request or is empty,
   # an error will be thrown.
   requiredFields: ["name"]
+
+reCaptcha:
+  enabled: true
+  # reCaptcha Site Key and Secret Key can be retrieved from: https://www.google.com/recaptcha/admin/site/721482309/settings
+  siteKey: 6LfL-QArAAAAAN7t0flOSUCMZbMxcyqjJ63tuibC
+  # Secret value below is encrypted secret string
+  # https://staticman.calcoasttech.com/v3/encrypt/...secretvalue...
+  # Docs: https://staticman.net/docs/spam
+  secret: GPlW7eFKRr4sjiljYviBU9/pRkLDlyPBkfGBlw+tYaW/jQ0jNTXchBc7fNadojfdKOpwaxouZM9MbsSr1BPIKgPtxjDvCAfTg63ukuvZHgbzRDKifDzwvbcs6QoiimJ5S9pHuUBu91sMyWZ7Nu+lC91aq5UqsxohPfPmy33Mom45xqzbnubDIhMp/zEElf59ebNWjo8STP7MYLTL5i8RaoOe3FAQQQ5cf6LfH4BzwPV6ywvLIxXI3GjH3YYA/tvMRTytqnevNoc7iK4rBoikWAh8Jy0tdD0yzw1O1yY0XqqrbOEAT2q5nISKU9sD5LQkZQ84K9okE9ODibiqU0o+1qc41sW9uC53JL1uxDsIoaRGeca/55fL5TJ3gHd3hlYI8vTidNGha7khFi3SwR5s0wgL7vQw/W50GLQtzOU7pTjD3mMzSpBR8ugxC6Uti2MoXAwM8kGhN2gJoiRv2H7YXOAa1i/vUkqAIwPTKGWmruBKipdl39pQOkcMcCN4Oi4XrR5l6cA3eGEseduiY3MUkZ3LNLW4xV2OYRhH9Ygosxh6b/pe4gQaEbKd96QtdYkE+HD/0Yj1QrVyOPMSGzYmjrNq2d3spy+RDJmYJbtY4G/WPLWp2PNa3TrQ94Wysk7j499u/lCqbVeWS+FmAXfvt9rJseJHrrIP4kCUkqbF9UA=

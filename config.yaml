@@ -65,7 +65,7 @@ params:
     # reCaptcha Site Key and Secret Key
     # Must match values in staticman.yml
     siteKey: 6LfL-QArAAAAAN7t0flOSUCMZbMxcyqjJ63tuibC
-    secret: GPlW7eFKRr4sjiljYviBU9/pRkLDlyPBkfGBlw+tYaW/jQ0jNTXchBc7fNadojfdKOpwaxouZM9MbsSr1BPIKgPtxjDvCAfTg63ukuvZHgbzRDKifDzwvbcs6QoiimJ5S9pHuUBu91sMyWZ7Nu+lC91aq5UqsxohPfPmy33Mom45xqzbnubDIhMp/zEElf59ebNWjo8STP7MYLTL5i8RaoOe3FAQQQ5cf6LfH4BzwPV6ywvLIxXI3GjH3YYA/tvMRTytqnevNoc7iK4rBoikWAh8Jy0tdD0yzw1O1yY0XqqrbOEAT2q5nISKU9sD5LQkZQ84K9okE9ODibiqU0o+1qc41sW9uC53JL1uxDsIoaRGeca/55fL5TJ3gHd3hlYI8vTidNGha7khFi3SwR5s0wgL7vQw/W50GLQtzOU7pTjD3mMzSpBR8ugxC6Uti2MoXAwM8kGhN2gJoiRv2H7YXOAa1i/vUkqAIwPTKGWmruBKipdl39pQOkcMcCN4Oi4XrR5l6cA3eGEseduiY3MUkZ3LNLW4xV2OYRhH9Ygosxh6b/pe4gQaEbKd96QtdYkE+HD/0Yj1QrVyOPMSGzYmjrNq2d3spy+RDJmYJbtY4G/WPLWp2PNa3TrQ94Wysk7j499u/lCqbVeWS+FmAXfvt9rJseJHrrIP4kCUkqbF9UA=
+    secret: cSNiHbigA30M2Ma+6toXNTlx/5PIJU2+I6SzFBcfZp9b3G6Uc89OI1ZFihm/xufYt7zrNVRq+x4Mdt6n7ro5Q35HOFIwvAg2y9IdhdKRA+474GUddv7xxsbzV5dYf1prILvlH7jJXxhL2tKn/Jji5bFkx26LBNiT6uowDgjWhBSZkcvZHZ+1Tdneql44YhYHbczkW4QpHn99dX1Ckwj15FhtnBXIEbWI4/qL5mxXxXlHzffuA1uhv0eVQ8UYngwX06n9lPBYLI3UQv8rueaNZm1BcwGmj+RhL5VtkeGjMwBVdz7nr/oh9KGPeXrxhJUeEECZSFzrQQY8pKj3kpJ56CnwsbP1/dc41IlglYpep8A0IRpYzrDxy8XGWtmgqCfkyZfPzzGZ1HUhS8hkswXvAT67ZhcIAC96Zs+Ewhb23d7D3GRpodtO2vzL14S7BCqaqhsnhOk6+itldacyuntlDfaEpoEZaLM0fhdCovtxJ4dsA6JrJW9EaYnIg37BO8VW61Y0cClGnvbENhHIHewr8AxGQ3Dr/7S7vcg0W6n+UPuZ4dD3NUe3T4+PjJ9iCzxLU/vsl5ORyENZZTmwac7xITUUTbjyGshwZerFM2NMP7ODn4y/eMfFaiaNdxdvmswuq0U4DebDBmKHDsoBRkiaZREuCHahFxoabqIj0yzbos8=
 menu:
   main:
     - name: Posts
@@ -79,8 +79,6 @@ menu:
       weight: -1
     # - name: KN6YDZ
     #   url: /kn6ydz
-    - name: Now
-      url: /now
     - name: Guestbook
       url: /guestbook
 

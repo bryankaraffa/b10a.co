@@ -80,8 +80,6 @@ menu:
       weight: -1
     # - name: KN6YDZ
     #   url: /kn6ydz
-    - name: Now
-      url: /now
     - name: Guestbook
       url: /guestbook
 

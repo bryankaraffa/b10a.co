@@ -4,7 +4,7 @@
   <input type="hidden" name="options[reCaptcha][secret]" value="{{ .Site.Params.reCaptcha.secret }}">
   <label>Name or Callsign <input name="fields[name]" type="text" alt="Name or Callsign" placeholder="Joe Bob"></label><br/>
   <label>Optional Message <br/><textarea name="fields[message]" alt="Message" style="width: 90%; min-width: 100px;" placeholder="Hello!"></textarea></label><br/>
-  <div class="g-recaptcha" data-sitekey="{{ .Site.Params.reCaptcha.siteKey }}" data-action="LOGIN"></div>
+  <div class="g-recaptcha" data-sitekey="{{ .Site.Params.reCaptcha.siteKey }}" data-action="submit"></div>
   <input type="submit" value="Submit">
 </form>
 <small><i>

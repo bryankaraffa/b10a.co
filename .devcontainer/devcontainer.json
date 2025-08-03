@@ -3,15 +3,20 @@
 {
 	"name": "Ubuntu",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/base:jammy",
+	"image": "mcr.microsoft.com/devcontainers/go",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
     	// hugo v1.x.x
 		"ghcr.io/devcontainers/features/hugo:1": {},
-    	// golang v1.x.x
-  		"ghcr.io/devcontainers/features/go:1": {}
-	}
+		// GitHub CLI
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		// Docker-in-Docker
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+	},
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "bash -c 'curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash'"
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],

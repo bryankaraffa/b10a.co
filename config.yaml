@@ -67,7 +67,7 @@ params:
     siteKey: 6LfL-QArAAAAAN7t0flOSUCMZbMxcyqjJ63tuibC
   guestbookServer:
     # Guestbook server URL - update this for production deployment
-    url: "http://localhost:8080"
+    url: "https://b10a-co-guestbook-server-777740880226.us-central1.run.app/guestbook"
 
 menu:
   main:

@@ -1,4 +1,4 @@
-<form id="guestbook-form" method="POST" action="{{ .Site.Params.guestbookServer.url | default "http://localhost:8080" }}/guestbook">
+<form id="guestbook-form" method="POST" action="{{ .Site.Params.guestbookServer.url }}">
   <input name="redirect" type="hidden" value="{{ absURL "/guestbook-success" }}?success=true">
   
   <!-- Honeypot field (hidden from users, bots will fill it) -->

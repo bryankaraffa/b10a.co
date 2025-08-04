@@ -41,7 +41,7 @@ func TestSanitizeString(t *testing.T) {
 		{
 			name:     "String with special characters",
 			input:    "Test & validation",
-			expected: "Test & validation",
+			expected: "Test &amp; validation",
 		},
 	}
 

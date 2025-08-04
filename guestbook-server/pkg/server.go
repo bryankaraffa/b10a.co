@@ -194,7 +194,7 @@ func (s *Server) isLikelySpam(req GuestbookRequest) bool {
 
 	content := req.Name + " " + req.Message
 	for _, pattern := range suspiciousPatterns {
-		if contains(content, pattern) {
+		if strings.Contains(content, pattern) {
 			return true
 		}
 	}
@@ -210,11 +210,6 @@ func (s *Server) isLikelySpam(req GuestbookRequest) bool {
 	}
 
 	return false
-}
-
-func contains(text, pattern string) bool {
-	return len(text) >= len(pattern) && text[:len(pattern)] == pattern ||
-		len(text) > len(pattern) && contains(text[1:], pattern)
 }
 
 func isRepetitive(text string) bool {

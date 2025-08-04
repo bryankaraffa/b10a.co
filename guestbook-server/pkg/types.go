@@ -29,9 +29,8 @@ func (r *GuestbookRequest) ToEntry() *GuestbookEntry {
 }
 
 func sanitizeString(s string) string {
-	// Remove any HTML/markdown and keep only plain text
-	// This is a simple implementation - you might want to use a proper HTML sanitizer
-	return s
+	// Escape HTML special characters to prevent XSS
+	return template.HTMLEscapeString(s)
 }
 
 func generateID() string {

@@ -1,6 +1,7 @@
 package guestbook_server
 
 import (
+	"html/template"
 	"time"
 )
 

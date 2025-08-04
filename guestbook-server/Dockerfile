@@ -3,16 +3,17 @@ FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
 
-## Copy source code
-COPY . .
+## Copy go.mod and go.sum files to the working directory
+COPY guestbook-server/go.mod guestbook-server/go.sum ./
 
 ## Download dependencies
 RUN go mod download
 
-RUN ls -alh
+## Copy source code
+COPY . .
 
 ## Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o guestbook-server ./cmd/guestbook-server
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o guestbook-server ./guestbook-server
 
 # Final stage
 FROM alpine:latest

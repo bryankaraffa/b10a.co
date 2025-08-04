@@ -4,13 +4,13 @@ FROM golang:1.24-alpine AS builder
 WORKDIR /app
 
 ## Copy go.mod and go.sum files to the working directory
-COPY guestbook-server/go.mod guestbook-server/go.sum ./
+COPY go.mod go.sum ./
 
 ## Download dependencies
 RUN go mod download
 
 ## Copy source code
-COPY guestbook-server/. .
+COPY . .
 
 ## Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o guestbook-server .

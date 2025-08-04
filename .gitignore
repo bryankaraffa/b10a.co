@@ -20,5 +20,4 @@ hugo.linux
 .env.*.local
 
 # Go binary
-guestbook-server
 /bin/

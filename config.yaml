@@ -65,7 +65,9 @@ params:
     # reCaptcha Site Key and Secret Key
     # Must match values in staticman.yml
     siteKey: 6LfL-QArAAAAAN7t0flOSUCMZbMxcyqjJ63tuibC
-    secret: AkY0ad21s1jVEEF29HoyaWiyghTTa3yOD20qK8cAsD1RUg7VBDFio3gpGZIG6jfwoNkWVzcUSq+Opl1y//wwZT+irq9uzUs7a7dp/xc7CQTbb3noP+sle+3U7LNYBRQQSNsBzfHEBrQc1o2PwblgLp2mSzRlS+1dx36QmLhECRS9vjkbbD64IvoKMj9dakwEsoFR3mBnAiQxuEyEUQeSzfL5fYakHYxT/+Rn5UAcIy2CUDsYEeDWqHwh0e4Afnak4Dwe/TVtglpVGzhYZKiacUE3I0ZxksnhCyISF4XdHtNC8rWd1CmrbytE/n6sz2RTFEDlK8ryhRIsNCGGcaWFQQftXridCVdxMUXEOm3844xmOkMMx9e9RZCN0bsjrUYbBmCY9QtX0Rb7Ja/hi2OfO28QykXoYYUolC2Kotbc8uisXv32ueNF+UlRRskuHuTjUpWnNwsIpGdzpAfEDQ1MAbGuG4qB88/+zq9UTDsH8c7Ac5zoslU+jqy9arIwxSqrXcHB8OMUvd2GeAGEbYZvXXuz31kWHTgiRwRinQLRHm6eVATrI/v+Q+NuvBoS/4YdXbCCt/hQRAkALR8hml/+ixijZhz9jtptxSz6Q9DJbRsFOE82YQZKSfrc76SYGQuT3RqveZxHcAnToPp8E8zm0a7GdTChukUHl1hh/5Fz2ec=
+  guestbookServer:
+    # Guestbook server URL - update this for production deployment
+    url: "http://localhost:8080"
 
 menu:
   main:

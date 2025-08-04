@@ -87,7 +87,7 @@ Some of the basic configurations are:
   - All submissions will require approval (Pull Request) before getting published
   - Data files output by Staticman will output to `data/guestbook/entries<timestamp>.yml
 
-The full Staticman Site configuration for this site is public here: [`staticman.yml`](https://github.com/bryankaraffa/b10a.co/blob/main/staticman.yml)
+The full Staticman Site configuration for this site is public here: [`staticman.yml`](https://github.com/bryankaraffa/b10a.co/blob/602865b8bcd071d07af4431bd2b0c2cff492a886/staticman.yml)
 
 
 ## Add Guestbook Shortcodes and Page to Hugo Site

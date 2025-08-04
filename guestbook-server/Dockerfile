@@ -12,7 +12,7 @@ RUN go mod download
 RUN ls -alh
 
 ## Build the application
-# RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o guestbook-server ./cmd/guestbook-server
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o guestbook-server ./cmd/guestbook-server
 
 # Final stage
 FROM alpine:latest

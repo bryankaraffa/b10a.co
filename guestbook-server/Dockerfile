@@ -10,7 +10,7 @@ COPY guestbook-server/go.mod guestbook-server/go.sum ./
 RUN go mod download
 
 ## Copy source code
-COPY . .
+COPY guestbook-server/. .
 
 ## Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o guestbook-server .

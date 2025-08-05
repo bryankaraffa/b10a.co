@@ -3,6 +3,7 @@ package guestbook_server
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -112,19 +113,26 @@ func (s *Server) Start() error {
 func (s *Server) handleGuestbookSubmission(c *gin.Context) {
 	var req GuestbookRequest
 
+	log.Printf("Received guestbook submission from IP: %s", c.ClientIP())
+
 	// Try to bind based on content type
 	contentType := c.GetHeader("Content-Type")
 	if strings.Contains(contentType, "application/json") {
 		if err := c.ShouldBindJSON(&req); err != nil {
+			log.Printf("Failed to bind JSON: %v", err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
 			return
 		}
 	} else {
 		if err := c.ShouldBind(&req); err != nil {
+			log.Printf("Failed to bind form data: %v", err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
 			return
 		}
 	}
+
+	log.Printf("Parsed request - Name: %s, Message length: %d, RecaptchaResponse present: %t",
+		req.Name, len(req.Message), req.RecaptchaResponse != "")
 
 	// Validate required fields
 	if req.Name == "" {
@@ -140,15 +148,35 @@ func (s *Server) handleGuestbookSubmission(c *gin.Context) {
 
 	// Verify reCAPTCHA
 	if req.RecaptchaResponse != "" {
-		if valid, err := s.recaptcha.Verify(c.Request.Context(), req.RecaptchaResponse, c.ClientIP()); err != nil || !valid {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification failed", "details": err.Error()})
-			// Log the error for debugging
-			c.Errors = append(c.Errors, &gin.Error{
-				Err:  fmt.Errorf("reCAPTCHA verification failed: %v", err),
-				Type: gin.ErrorTypePublic,
-			})
-			return
+		log.Printf("Verifying reCAPTCHA for IP: %s", c.ClientIP())
+		if s.recaptcha == nil {
+			log.Printf("Warning: reCAPTCHA client is nil, skipping verification")
+		} else {
+			valid, err := s.recaptcha.Verify(c.Request.Context(), req.RecaptchaResponse, c.ClientIP())
+			if err != nil {
+				log.Printf("reCAPTCHA verification error: %v", err)
+				c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification failed", "details": err.Error()})
+				// Log the error for debugging
+				c.Errors = append(c.Errors, &gin.Error{
+					Err:  fmt.Errorf("reCAPTCHA verification failed: %v", err),
+					Type: gin.ErrorTypePublic,
+				})
+				return
+			}
+			if !valid {
+				log.Printf("reCAPTCHA verification failed: invalid response for IP: %s", c.ClientIP())
+				c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification failed", "details": "Invalid reCAPTCHA response"})
+				// Log the error for debugging
+				c.Errors = append(c.Errors, &gin.Error{
+					Err:  fmt.Errorf("reCAPTCHA verification failed: invalid response"),
+					Type: gin.ErrorTypePublic,
+				})
+				return
+			}
+			log.Printf("reCAPTCHA verification successful for IP: %s", c.ClientIP())
 		}
+	} else {
+		log.Printf("No reCAPTCHA response provided")
 	}
 
 	// Check for spam using Akismet

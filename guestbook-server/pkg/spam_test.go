@@ -25,12 +25,23 @@ func TestNewAkismetClient(t *testing.T) {
 
 func TestNewRecaptchaClient(t *testing.T) {
 	// Test with valid secret key
-	client := NewRecaptchaClient("test-secret")
+	client := NewRecaptchaClient("test-secret", 0.5)
 	assert.NotNil(t, client)
 	assert.Equal(t, "test-secret", client.secretKey)
+	assert.Equal(t, 0.5, client.scoreThreshold)
+
+	// Test with valid secret key and custom threshold
+	client2 := NewRecaptchaClient("test-secret", 0.7)
+	assert.NotNil(t, client2)
+	assert.Equal(t, 0.7, client2.scoreThreshold)
+
+	// Test with valid secret key and zero threshold (should default to 0.5)
+	client3 := NewRecaptchaClient("test-secret", 0)
+	assert.NotNil(t, client3)
+	assert.Equal(t, 0.5, client3.scoreThreshold)
 
 	// Test with empty secret key
-	nilClient := NewRecaptchaClient("")
+	nilClient := NewRecaptchaClient("", 0.5)
 	assert.Nil(t, nilClient)
 }
 
@@ -133,7 +144,7 @@ func TestRecaptchaClient_Verify(t *testing.T) {
 
 	// Note: Similar to Akismet, this would require making the URL configurable for testing
 	// The current implementation calls the real Google reCAPTCHA API
-	client := NewRecaptchaClient("test-secret")
+	client := NewRecaptchaClient("test-secret", 0.5)
 
 	// This test would fail with the current implementation
 	_, err = client.Verify(context.Background(), "test-response", "127.0.0.1")

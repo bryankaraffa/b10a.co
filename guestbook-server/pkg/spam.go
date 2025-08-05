@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -78,8 +79,9 @@ func (a *AkismetClient) CheckSpam(ctx context.Context, comment AkismetComment) (
 }
 
 type RecaptchaClient struct {
-	secretKey string
-	client    *http.Client
+	secretKey      string
+	scoreThreshold float64
+	client         *http.Client
 }
 
 type RecaptchaResponse struct {
@@ -91,13 +93,17 @@ type RecaptchaResponse struct {
 	ErrorCodes  []string `json:"error-codes"`
 }
 
-func NewRecaptchaClient(secretKey string) *RecaptchaClient {
+func NewRecaptchaClient(secretKey string, scoreThreshold float64) *RecaptchaClient {
 	if secretKey == "" {
 		return nil
 	}
+	if scoreThreshold <= 0 {
+		scoreThreshold = 0.5 // Default threshold
+	}
 	return &RecaptchaClient{
-		secretKey: secretKey,
-		client:    &http.Client{},
+		secretKey:      secretKey,
+		scoreThreshold: scoreThreshold,
+		client:         &http.Client{},
 	}
 }
 
@@ -131,6 +137,20 @@ func (r *RecaptchaClient) Verify(ctx context.Context, response, remoteIP string)
 		return false, err
 	}
 
+	// Log detailed response for debugging
+	log.Printf("reCAPTCHA response: Success=%t, Score=%.2f, Action=%s, Hostname=%s, ErrorCodes=%v",
+		result.Success, result.Score, result.Action, result.Hostname, result.ErrorCodes)
+
 	// For reCAPTCHA v3, check both success and score
-	return result.Success && result.Score >= 0.5, nil
+	isValid := result.Success && result.Score >= r.scoreThreshold
+
+	if !isValid {
+		if !result.Success {
+			return false, fmt.Errorf("reCAPTCHA verification failed: %v", result.ErrorCodes)
+		} else if result.Score < r.scoreThreshold {
+			return false, fmt.Errorf("reCAPTCHA score too low: %.2f (minimum: %.2f)", result.Score, r.scoreThreshold)
+		}
+	}
+
+	return isValid, nil
 }

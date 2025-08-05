@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strconv"
 
 	server "github.com/bryankaraffa/b10a.co/guestbook-server/pkg"
 	"github.com/joho/godotenv"
@@ -32,6 +33,18 @@ func main() {
 		RedirectURL:        os.Getenv("REDIRECT_URL"),
 		RateLimitRequests:  10, // 10 requests per minute
 		RateLimitWindow:    60, // 60 seconds
+	}
+
+	// Parse RecaptchaScoreThreshold from environment variable
+	if scoreThresholdStr := os.Getenv("RECAPTCHA_SCORE_THRESHOLD"); scoreThresholdStr != "" {
+		if threshold, err := strconv.ParseFloat(scoreThresholdStr, 64); err == nil {
+			config.RecaptchaScoreThreshold = threshold
+		} else {
+			log.Printf("Invalid RECAPTCHA_SCORE_THRESHOLD value: %s, using default 0.5", scoreThresholdStr)
+			config.RecaptchaScoreThreshold = 0.5
+		}
+	} else {
+		config.RecaptchaScoreThreshold = 0.5 // Default threshold
 	}
 
 	// Set defaults

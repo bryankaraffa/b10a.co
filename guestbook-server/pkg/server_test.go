@@ -17,17 +17,18 @@ import (
 
 func TestNew(t *testing.T) {
 	config := &Config{
-		Port:               "8080",
-		AkismetAPIKey:      "test-key",
-		AkismetSiteURL:     "https://example.com",
-		RecaptchaSecretKey: "test-secret",
-		GitHubToken:        "test-token",
-		GitHubOwner:        "testowner",
-		GitHubRepo:         "testrepo",
-		AllowedOrigins:     []string{"https://example.com"},
-		RedirectURL:        "https://example.com/success",
-		RateLimitRequests:  10,
-		RateLimitWindow:    60,
+		Port:                    "8080",
+		AkismetAPIKey:           "test-key",
+		AkismetSiteURL:          "https://example.com",
+		RecaptchaSecretKey:      "test-secret",
+		RecaptchaScoreThreshold: 0.5,
+		GitHubToken:             "test-token",
+		GitHubOwner:             "testowner",
+		GitHubRepo:              "testrepo",
+		AllowedOrigins:          []string{"https://example.com"},
+		RedirectURL:             "https://example.com/success",
+		RateLimitRequests:       10,
+		RateLimitWindow:         60,
 	}
 
 	server := New(config)

@@ -18,17 +18,18 @@ type GitHubClientInterface interface {
 }
 
 type Config struct {
-	Port               string
-	AkismetAPIKey      string
-	AkismetSiteURL     string
-	RecaptchaSecretKey string
-	GitHubToken        string
-	GitHubOwner        string
-	GitHubRepo         string
-	AllowedOrigins     []string
-	RedirectURL        string
-	RateLimitRequests  int
-	RateLimitWindow    int
+	Port                    string
+	AkismetAPIKey           string
+	AkismetSiteURL          string
+	RecaptchaSecretKey      string
+	RecaptchaScoreThreshold float64
+	GitHubToken             string
+	GitHubOwner             string
+	GitHubRepo              string
+	AllowedOrigins          []string
+	RedirectURL             string
+	RateLimitRequests       int
+	RateLimitWindow         int
 }
 
 type Server struct {
@@ -50,7 +51,7 @@ func New(config *Config) *Server {
 
 	// Initialize clients
 	akismet := NewAkismetClient(config.AkismetAPIKey, config.AkismetSiteURL)
-	recaptcha := NewRecaptchaClient(config.RecaptchaSecretKey)
+	recaptcha := NewRecaptchaClient(config.RecaptchaSecretKey, config.RecaptchaScoreThreshold)
 	github := NewGitHubClient(config.GitHubToken, config.GitHubOwner, config.GitHubRepo)
 
 	server := &Server{
@@ -148,7 +149,7 @@ func (s *Server) handleGuestbookSubmission(c *gin.Context) {
 
 	// Verify reCAPTCHA
 	if req.RecaptchaResponse != "" {
-		log.Printf("Verifying reCAPTCHA for IP: %s", c.ClientIP())
+		log.Printf("Verifying reCAPTCHA for IP: %s, Response length: %d", c.ClientIP(), len(req.RecaptchaResponse))
 		if s.recaptcha == nil {
 			log.Printf("Warning: reCAPTCHA client is nil, skipping verification")
 		} else {
@@ -164,7 +165,7 @@ func (s *Server) handleGuestbookSubmission(c *gin.Context) {
 				return
 			}
 			if !valid {
-				log.Printf("reCAPTCHA verification failed: invalid response for IP: %s", c.ClientIP())
+				log.Printf("reCAPTCHA verification failed: response was valid but score/success check failed for IP: %s", c.ClientIP())
 				c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification failed", "details": "Invalid reCAPTCHA response"})
 				// Log the error for debugging
 				c.Errors = append(c.Errors, &gin.Error{

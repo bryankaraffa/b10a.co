@@ -141,7 +141,12 @@ func (s *Server) handleGuestbookSubmission(c *gin.Context) {
 	// Verify reCAPTCHA
 	if req.RecaptchaResponse != "" {
 		if valid, err := s.recaptcha.Verify(c.Request.Context(), req.RecaptchaResponse, c.ClientIP()); err != nil || !valid {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification failed"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification failed", "details": err.Error()})
+			// Log the error for debugging
+			c.Errors = append(c.Errors, &gin.Error{
+				Err:  fmt.Errorf("reCAPTCHA verification failed: %v", err),
+				Type: gin.ErrorTypePublic,
+			})
 			return
 		}
 	}

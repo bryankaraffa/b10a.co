@@ -35,7 +35,7 @@ func TestNew(t *testing.T) {
 	assert.NotNil(t, server)
 	assert.Equal(t, config, server.config)
 	assert.NotNil(t, server.router)
-	assert.NotNil(t, server.limiter)
+	assert.NotNil(t, server.ipRateLimiters)
 }
 
 func TestHealthEndpoint(t *testing.T) {
@@ -246,11 +246,12 @@ func TestGuestbookSubmission_Success(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	config := &Config{
-		Port:              "8080",
-		AllowedOrigins:    []string{"*"},
-		RateLimitRequests: 100,
-		RateLimitWindow:   60,
-		RedirectURL:       "https://example.com/success",
+		Port:                   "8080",
+		AllowedOrigins:         []string{"*"},
+		AllowedRedirectDomains: []string{"example.com"},
+		RateLimitRequests:      100,
+		RateLimitWindow:        60,
+		RedirectURL:            "https://example.com/success",
 	}
 
 	server := New(config)

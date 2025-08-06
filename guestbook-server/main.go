@@ -45,17 +45,19 @@ func main() {
 
 	// Load configuration from environment variables
 	config := &server.Config{
-		Port:               os.Getenv("PORT"),
-		AkismetAPIKey:      os.Getenv("AKISMET_API_KEY"),
-		AkismetSiteURL:     os.Getenv("AKISMET_SITE_URL"),
-		RecaptchaSecretKey: os.Getenv("RECAPTCHA_SECRET_KEY"),
-		GitHubToken:        os.Getenv("GITHUB_TOKEN"),
-		GitHubOwner:        os.Getenv("GITHUB_OWNER"),
-		GitHubRepo:         os.Getenv("GITHUB_REPO"),
-		AllowedOrigins:     []string{"https://b10a.co", "http://localhost:1313"},
-		RedirectURL:        os.Getenv("REDIRECT_URL"),
-		RateLimitRequests:  10, // 10 requests per minute
-		RateLimitWindow:    60, // 60 seconds
+		Port:                   os.Getenv("PORT"),
+		AkismetAPIKey:          os.Getenv("AKISMET_API_KEY"),
+		AkismetSiteURL:         os.Getenv("AKISMET_SITE_URL"),
+		RecaptchaSecretKey:     os.Getenv("RECAPTCHA_SECRET_KEY"),
+		GitHubToken:            os.Getenv("GITHUB_TOKEN"),
+		GitHubOwner:            os.Getenv("GITHUB_OWNER"),
+		GitHubRepo:             os.Getenv("GITHUB_REPO"),
+		GitHubBranch:           os.Getenv("GITHUB_BRANCH"),
+		AllowedOrigins:         []string{"https://b10a.co", "http://localhost:1313"},
+		AllowedRedirectDomains: []string{"b10a.co", "localhost"},
+		RedirectURL:            os.Getenv("REDIRECT_URL"),
+		RateLimitRequests:      10, // 10 requests per minute
+		RateLimitWindow:        60, // 60 seconds
 	}
 
 	// Parse RecaptchaScoreThreshold from environment variable
@@ -84,6 +86,9 @@ func main() {
 	}
 	if config.GitHubRepo == "" {
 		config.GitHubRepo = "b10a.co"
+	}
+	if config.GitHubBranch == "" {
+		config.GitHubBranch = "main"
 	}
 	if config.RedirectURL == "" {
 		config.RedirectURL = "https://b10a.co/guestbook-success?success=true"

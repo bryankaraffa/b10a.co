@@ -14,9 +14,10 @@ type GitHubClient struct {
 	client *github.Client
 	owner  string
 	repo   string
+	branch string
 }
 
-func NewGitHubClient(token, owner, repo string) *GitHubClient {
+func NewGitHubClient(token, owner, repo, branch string) *GitHubClient {
 	if token == "" {
 		return nil
 	}
@@ -32,6 +33,7 @@ func NewGitHubClient(token, owner, repo string) *GitHubClient {
 		client: client,
 		owner:  owner,
 		repo:   repo,
+		branch: branch,
 	}
 }
 
@@ -52,9 +54,9 @@ func (g *GitHubClient) CreateGuestbookEntry(ctx context.Context, req GuestbookRe
 	}
 
 	// Get current main branch
-	ref, _, err := g.client.Git.GetRef(ctx, g.owner, g.repo, "refs/heads/main")
+	ref, _, err := g.client.Git.GetRef(ctx, g.owner, g.repo, "refs/heads/"+g.branch)
 	if err != nil {
-		return fmt.Errorf("failed to get main branch ref: %w", err)
+		return fmt.Errorf("failed to get %s branch ref: %w", g.branch, err)
 	}
 
 	// Create new branch
@@ -92,7 +94,7 @@ func (g *GitHubClient) CreateGuestbookEntry(ctx context.Context, req GuestbookRe
 	pr := &github.NewPullRequest{
 		Title: github.String(title),
 		Head:  github.String(branchName),
-		Base:  github.String("main"),
+		Base:  github.String(g.branch),
 		Body:  github.String(body),
 	}
 

@@ -116,6 +116,7 @@ func (r *RecaptchaClient) Verify(ctx context.Context, response, remoteIP string)
 	data.Set("secret", r.secretKey)
 	data.Set("response", response)
 	data.Set("remoteip", remoteIP)
+	// Don't set action here - let the response tell us what action was used
 
 	req, err := http.NewRequestWithContext(ctx, "POST",
 		"https://www.google.com/recaptcha/api/siteverify",
@@ -141,16 +142,30 @@ func (r *RecaptchaClient) Verify(ctx context.Context, response, remoteIP string)
 	log.Printf("reCAPTCHA response: Success=%t, Score=%.2f, Action=%s, Hostname=%s, ErrorCodes=%v",
 		result.Success, result.Score, result.Action, result.Hostname, result.ErrorCodes)
 
-	// For reCAPTCHA v3, check both success and score
-	isValid := result.Success && result.Score >= r.scoreThreshold
-
-	if !isValid {
-		if !result.Success {
-			return false, fmt.Errorf("reCAPTCHA verification failed: %v", result.ErrorCodes)
-		} else if result.Score < r.scoreThreshold {
-			return false, fmt.Errorf("reCAPTCHA score too low: %.2f (minimum: %.2f)", result.Score, r.scoreThreshold)
+	// Additional debugging for your specific case
+	if result.Score == 0.0 {
+		if len(result.ErrorCodes) > 0 {
+			log.Printf("reCAPTCHA debugging: Score is 0.0 with errors - this suggests a configuration issue")
+		} else {
+			log.Printf("reCAPTCHA debugging: Score is 0.0 with no errors - this might be reCAPTCHA v2 or a site key mismatch")
 		}
 	}
 
-	return isValid, nil
+	// Check if basic verification succeeded first
+	if !result.Success {
+		return false, fmt.Errorf("reCAPTCHA verification failed: %v", result.ErrorCodes)
+	}
+
+	// For reCAPTCHA v2, score will be 0.0 and that's ok
+	if result.Score == 0.0 {
+		log.Printf("reCAPTCHA v2 response detected (score=0.0), accepting based on success=true")
+		return true, nil
+	}
+
+	// For reCAPTCHA v3, check the score
+	if result.Score < r.scoreThreshold {
+		return false, fmt.Errorf("reCAPTCHA score too low: %.2f (minimum: %.2f)", result.Score, r.scoreThreshold)
+	}
+
+	return true, nil
 }

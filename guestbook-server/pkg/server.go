@@ -103,12 +103,57 @@ func (s *Server) setupRoutes() {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 
+	// Debug endpoint for reCAPTCHA testing (remove in production)
+	s.router.POST("/debug/recaptcha", s.handleRecaptchaDebug)
+
 	// Guestbook submission endpoint
 	s.router.POST("/guestbook", s.handleGuestbookSubmission)
 }
 
 func (s *Server) Start() error {
 	return s.router.Run(":" + s.config.Port)
+}
+
+// Debug endpoint for testing reCAPTCHA configuration
+func (s *Server) handleRecaptchaDebug(c *gin.Context) {
+	type DebugRequest struct {
+		RecaptchaResponse string `json:"recaptcha_response" form:"recaptcha_response"`
+	}
+
+	var req DebugRequest
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
+		return
+	}
+
+	if req.RecaptchaResponse == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "recaptcha_response is required"})
+		return
+	}
+
+	if s.recaptcha == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  "reCAPTCHA client not configured",
+			"message": "reCAPTCHA secret key not provided, verification would be skipped",
+		})
+		return
+	}
+
+	log.Printf("DEBUG: Testing reCAPTCHA token from IP: %s", c.ClientIP())
+	valid, err := s.recaptcha.Verify(c.Request.Context(), req.RecaptchaResponse, c.ClientIP())
+
+	response := gin.H{
+		"valid":        valid,
+		"client_ip":    c.ClientIP(),
+		"token_length": len(req.RecaptchaResponse),
+		"threshold":    s.recaptcha.scoreThreshold,
+	}
+
+	if err != nil {
+		response["error"] = err.Error()
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 func (s *Server) handleGuestbookSubmission(c *gin.Context) {

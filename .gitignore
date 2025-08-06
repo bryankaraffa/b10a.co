@@ -16,8 +16,9 @@ hugo.linux
 .DS_Store
 
 # Environment files with sensitive data
+.env
 .env.local
-.env.*.local
+.env.*
 
 # Go binary
 /bin/

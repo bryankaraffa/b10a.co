@@ -68,6 +68,7 @@ params:
   guestbookServer:
     # Guestbook server URL - update this for production deployment
     url: "https://b10a-co-guestbook-server-777740880226.us-central1.run.app/guestbook"
+    local: "http://127.0.0.1:8080/guestbook"
 
 menu:
   main:

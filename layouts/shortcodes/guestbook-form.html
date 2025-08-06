@@ -1,5 +1,15 @@
-<form id="guestbook-form" method="POST" action="{{ .Site.Params.guestbookServer.url }}">
+<form id="guestbook-form" 
+    method="POST" 
+    action="{{ if hugo.IsProduction }}{{ .Site.Params.guestbookServer.url }}{{ else }}{{ .Site.Params.guestbookServer.local }}{{ end }}" 
+    enctype="application/x-www-form-urlencoded">
   <input name="redirect" type="hidden" value="{{ absURL "/guestbook-success" }}?success=true">
+  
+  {{ if not hugo.IsProduction }}
+  <!-- Development Mode Notice -->
+  <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; margin: 10px 0; border-radius: 4px;">
+    <strong>Development Mode:</strong> Form will submit to: {{ .Site.Params.guestbookServer.local }}
+  </div>
+  {{ end }}
   
   <!-- Honeypot field (hidden from users, bots will fill it) -->
   <input name="website" type="text" style="display:none" tabindex="-1" autocomplete="off">
@@ -7,7 +17,7 @@
   <label>Name or Callsign <input name="name" type="text" alt="Name or Callsign" placeholder="Joe Bob" required></label><br/>
   <label>Optional Message <br/><textarea name="message" alt="Message" style="width: 90%; min-width: 100px;" placeholder="Hello!"></textarea></label><br/>
   
-  <!-- reCAPTCHA v3 -->
+  <!-- reCAPTCHA v2 Checkbox -->
   <div class="g-recaptcha" data-sitekey="{{ .Site.Params.reCaptcha.siteKey }}" data-callback="onRecaptchaSuccess"></div>
   
   <input type="submit" value="Submit" id="submit-button" disabled>
@@ -16,9 +26,15 @@
   All messages submitted are moderated, and any extra HTML/Markdown will be stripped -- only plaintext messages will be approved.
 </i></small><br />
 
-<!-- reCAPTCHA v3 Script -->
+<!-- reCAPTCHA v2 Script -->
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
+{{ if not hugo.IsProduction }}
+console.log('Guestbook Development Mode - Environment: {{ hugo.Environment }}');
+console.log('Guestbook Server URL: {{ if hugo.IsProduction }}{{ .Site.Params.guestbookServer.url }}{{ else }}{{ .Site.Params.guestbookServer.local }}{{ end }}');
+console.log('reCAPTCHA Site Key: {{ .Site.Params.reCaptcha.siteKey }}');
+{{ end }}
+
 function onRecaptchaSuccess(token) {
     // Enable submit button when reCAPTCHA is completed
     document.getElementById('submit-button').disabled = false;
@@ -62,7 +78,7 @@ document.getElementById('guestbook-form').addEventListener('submit', function(e)
             alert(data.message);
             // Reset form
             this.reset();
-            document.getElementById('submit-button').disabled = true;
+            submitButton.disabled = false;
             submitButton.value = 'Submit';
         }
     })

@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"regexp"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -34,19 +37,22 @@ type Config struct {
 	GitHubToken             string
 	GitHubOwner             string
 	GitHubRepo              string
+	GitHubBranch            string
 	AllowedOrigins          []string
+	AllowedRedirectDomains  []string
 	RedirectURL             string
 	RateLimitRequests       int
 	RateLimitWindow         int
 }
 
 type Server struct {
-	config    *Config
-	router    *gin.Engine
-	limiter   *rate.Limiter
-	akismet   *AkismetClient
-	recaptcha *RecaptchaClient
-	github    GitHubClientInterface
+	config         *Config
+	router         *gin.Engine
+	ipRateLimiters map[string]*rate.Limiter
+	mu             *sync.Mutex
+	akismet        *AkismetClient
+	recaptcha      *RecaptchaClient
+	github         GitHubClientInterface
 }
 
 func New(config *Config) *Server {
@@ -54,25 +60,49 @@ func New(config *Config) *Server {
 	router := gin.New()
 	router.Use(gin.Logger(), gin.Recovery())
 
-	// Create rate limiter: X requests per minute
-	limiter := rate.NewLimiter(rate.Every(time.Duration(config.RateLimitWindow)*time.Second/time.Duration(config.RateLimitRequests)), config.RateLimitRequests)
-
 	// Initialize clients
 	akismet := NewAkismetClient(config.AkismetAPIKey, config.AkismetSiteURL)
 	recaptcha := NewRecaptchaClient(config.RecaptchaSecretKey, config.RecaptchaScoreThreshold)
-	github := NewGitHubClient(config.GitHubToken, config.GitHubOwner, config.GitHubRepo)
+	github := NewGitHubClient(config.GitHubToken, config.GitHubOwner, config.GitHubRepo, config.GitHubBranch)
 
 	server := &Server{
-		config:    config,
-		router:    router,
-		limiter:   limiter,
-		akismet:   akismet,
-		recaptcha: recaptcha,
-		github:    github,
+		config:         config,
+		router:         router,
+		ipRateLimiters: make(map[string]*rate.Limiter),
+		mu:             &sync.Mutex{},
+		akismet:        akismet,
+		recaptcha:      recaptcha,
+		github:         github,
 	}
 
 	server.setupRoutes()
+
+	// Start a background goroutine to clean up old rate limiters
+	go server.cleanupRateLimiters()
+
 	return server
+}
+
+func (s *Server) cleanupRateLimiters() {
+	for {
+		// Wait for a specified interval before cleaning up
+		time.Sleep(10 * time.Minute)
+
+		s.mu.Lock()
+		// Create a new map for active limiters
+		cleanedLimiters := make(map[string]*rate.Limiter)
+		for ip, limiter := range s.ipRateLimiters {
+			// A simple heuristic: if the limiter has not been used recently,
+			// it might be considered for removal. Here we check if the limit
+			// has been reached, which is a proxy for recent activity.
+			// A more robust solution would track last access time.
+			if limiter.Burst() < s.config.RateLimitRequests {
+				cleanedLimiters[ip] = limiter
+			}
+		}
+		s.ipRateLimiters = cleanedLimiters
+		s.mu.Unlock()
+	}
 }
 
 func (s *Server) setupRoutes() {
@@ -97,71 +127,49 @@ func (s *Server) setupRoutes() {
 	})
 
 	// Rate limiting middleware
-	s.router.Use(func(c *gin.Context) {
-		if !s.limiter.Allow() {
-			c.JSON(http.StatusTooManyRequests, gin.H{"error": "Rate limit exceeded"})
-			c.Abort()
-			return
-		}
-		c.Next()
-	})
+	s.router.Use(s.rateLimitMiddleware)
 
 	// Health check
 	s.router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 
-	// Debug endpoint for reCAPTCHA testing (remove in production)
-	s.router.POST("/debug/recaptcha", s.handleRecaptchaDebug)
-
 	// Guestbook submission endpoint
 	s.router.POST("/guestbook", s.handleGuestbookSubmission)
 }
 
-func (s *Server) Start() error {
-	return s.router.Run(":" + s.config.Port)
+func (s *Server) rateLimitMiddleware(c *gin.Context) {
+	ip := c.ClientIP()
+	limiter := s.getRateLimiter(ip)
+
+	if !limiter.Allow() {
+		c.JSON(http.StatusTooManyRequests, gin.H{"error": "Rate limit exceeded"})
+		c.Abort()
+		return
+	}
+
+	c.Next()
 }
 
-// Debug endpoint for testing reCAPTCHA configuration
-func (s *Server) handleRecaptchaDebug(c *gin.Context) {
-	type DebugRequest struct {
-		RecaptchaResponse string `json:"recaptcha_response" form:"recaptcha_response"`
+func (s *Server) getRateLimiter(ip string) *rate.Limiter {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	limiter, exists := s.ipRateLimiters[ip]
+	if !exists {
+		// Create a new limiter for this IP
+		limiter = rate.NewLimiter(
+			rate.Every(time.Duration(s.config.RateLimitWindow)*time.Second/time.Duration(s.config.RateLimitRequests)),
+			s.config.RateLimitRequests,
+		)
+		s.ipRateLimiters[ip] = limiter
 	}
 
-	var req DebugRequest
-	if err := c.ShouldBind(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
-		return
-	}
+	return limiter
+}
 
-	if req.RecaptchaResponse == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "recaptcha_response is required"})
-		return
-	}
-
-	if s.recaptcha == nil {
-		c.JSON(http.StatusOK, gin.H{
-			"status":  "reCAPTCHA client not configured",
-			"message": "reCAPTCHA secret key not provided, verification would be skipped",
-		})
-		return
-	}
-
-	serverDebugLog("Testing reCAPTCHA token from IP: %s", c.ClientIP())
-	valid, err := s.recaptcha.Verify(c.Request.Context(), req.RecaptchaResponse, c.ClientIP())
-
-	response := gin.H{
-		"valid":        valid,
-		"client_ip":    c.ClientIP(),
-		"token_length": len(req.RecaptchaResponse),
-		"threshold":    s.recaptcha.scoreThreshold,
-	}
-
-	if err != nil {
-		response["error"] = err.Error()
-	}
-
-	c.JSON(http.StatusOK, response)
+func (s *Server) Start() error {
+	return s.router.Run(":" + s.config.Port)
 }
 
 func (s *Server) handleGuestbookSubmission(c *gin.Context) {
@@ -282,27 +290,57 @@ func (s *Server) handleGuestbookSubmission(c *gin.Context) {
 
 	// Redirect or return success
 	if req.Redirect != "" {
-		serverDebugLog("Redirecting to: %s", req.Redirect)
-		c.Redirect(http.StatusFound, req.Redirect)
+		if s.isValidRedirect(req.Redirect) {
+			serverDebugLog("Redirecting to valid URL: %s", req.Redirect)
+			c.Redirect(http.StatusFound, req.Redirect)
+		} else {
+			serverDebugLog("Invalid redirect URL blocked: %s", req.Redirect)
+			// Do not redirect, instead return a generic success message
+			c.JSON(http.StatusOK, gin.H{"message": "Thank you for your submission! It will be reviewed before being published."})
+		}
 	} else {
 		c.JSON(http.StatusOK, gin.H{"message": "Thank you for your submission! It will be reviewed before being published."})
 	}
 }
 
+func (s *Server) isValidRedirect(redirectURL string) bool {
+	// Parse the redirect URL
+	parsedURL, err := url.Parse(redirectURL)
+	if err != nil {
+		return false // Invalid URL format
+	}
+
+	// Check if the hostname is in the allowed list
+	for _, domain := range s.config.AllowedRedirectDomains {
+		if parsedURL.Hostname() == domain {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (s *Server) isLikelySpam(req GuestbookRequest) bool {
 	// Simple heuristics for detecting spam
 	suspiciousPatterns := []string{
-		"http://", "https://", "www.", ".com", ".net", ".org",
+		`[URL=http`, `[url=http`, `[link=http`,
 		"click here", "buy now", "free", "offer", "deal",
 		"viagra", "casino", "loan", "crypto", "bitcoin",
 	}
 
 	content := req.Name + " " + req.Message
 	for _, pattern := range suspiciousPatterns {
-		if strings.Contains(content, pattern) {
+		if strings.Contains(strings.ToLower(content), pattern) {
 			serverDebugLog("Suspicious pattern detected: '%s' in content from %s", pattern, req.Name)
 			return true
 		}
+	}
+
+	// Check for excessive links
+	linkRegex := regexp.MustCompile(`(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?`)
+	if len(linkRegex.FindAllString(req.Message, -1)) > 2 {
+		serverDebugLog("Too many links detected in message from %s, flagging as spam", req.Name)
+		return true
 	}
 
 	// Check for excessive length

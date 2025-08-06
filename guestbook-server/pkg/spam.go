@@ -8,8 +8,17 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
+
+var debugEnabled = os.Getenv("DEBUG") == "true"
+
+func debugLog(format string, args ...interface{}) {
+	if debugEnabled {
+		log.Printf("[DEBUG] "+format, args...)
+	}
+}
 
 type AkismetClient struct {
 	apiKey  string
@@ -39,8 +48,11 @@ func NewAkismetClient(apiKey, siteURL string) *AkismetClient {
 
 func (a *AkismetClient) CheckSpam(ctx context.Context, comment AkismetComment) (bool, error) {
 	if a == nil {
+		debugLog("Akismet client is nil, skipping spam check")
 		return false, nil
 	}
+
+	debugLog("Starting Akismet spam check for IP: %s, Author: %s", comment.UserIP, comment.CommentAuthor)
 
 	data := url.Values{}
 	data.Set("blog", a.siteURL)
@@ -51,21 +63,30 @@ func (a *AkismetClient) CheckSpam(ctx context.Context, comment AkismetComment) (
 	data.Set("comment_author", comment.CommentAuthor)
 	data.Set("comment_content", comment.CommentContent)
 
+	debugLog("Akismet request data: blog=%s, user_ip=%s, comment_type=%s, content_length=%d",
+		a.siteURL, comment.UserIP, comment.CommentType, len(comment.CommentContent))
+
 	req, err := http.NewRequestWithContext(ctx, "POST",
 		fmt.Sprintf("https://%s.rest.akismet.com/1.1/comment-check", a.apiKey),
 		strings.NewReader(data.Encode()))
 	if err != nil {
+		debugLog("Akismet request creation failed: %v", err)
 		return false, err
 	}
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("User-Agent", "GuestbookServer/1.0")
 
+	debugLog("Sending request to Akismet API: %s", req.URL.String())
+
 	resp, err := a.client.Do(req)
 	if err != nil {
+		debugLog("Akismet API request failed: %v", err)
 		return false, err
 	}
 	defer resp.Body.Close()
+
+	debugLog("Akismet API response status: %d", resp.StatusCode)
 
 	if resp.StatusCode != http.StatusOK {
 		return false, fmt.Errorf("akismet API returned status %d", resp.StatusCode)
@@ -75,7 +96,20 @@ func (a *AkismetClient) CheckSpam(ctx context.Context, comment AkismetComment) (
 	buf.ReadFrom(resp.Body)
 	result := strings.TrimSpace(buf.String())
 
-	return result == "true", nil
+	isSpam := result == "true"
+	debugLog("Akismet result: %s (isSpam: %t) for author: %s", result, isSpam, comment.CommentAuthor)
+
+	// Check for additional Akismet headers that provide debugging info
+	if debugEnabled {
+		if debugInfo := resp.Header.Get("X-akismet-debug-help"); debugInfo != "" {
+			debugLog("Akismet debug info: %s", debugInfo)
+		}
+		if proTip := resp.Header.Get("X-akismet-pro-tip"); proTip != "" {
+			debugLog("Akismet pro tip: %s", proTip)
+		}
+	}
+
+	return isSpam, nil
 }
 
 type RecaptchaClient struct {
@@ -109,8 +143,11 @@ func NewRecaptchaClient(secretKey string, scoreThreshold float64) *RecaptchaClie
 
 func (r *RecaptchaClient) Verify(ctx context.Context, response, remoteIP string) (bool, error) {
 	if r == nil {
+		debugLog("reCAPTCHA client is nil, skipping verification")
 		return true, nil // Skip verification if not configured
 	}
+
+	debugLog("Starting reCAPTCHA verification for IP: %s, response length: %d", remoteIP, len(response))
 
 	data := url.Values{}
 	data.Set("secret", r.secretKey)
@@ -122,50 +159,63 @@ func (r *RecaptchaClient) Verify(ctx context.Context, response, remoteIP string)
 		"https://www.google.com/recaptcha/api/siteverify",
 		strings.NewReader(data.Encode()))
 	if err != nil {
+		debugLog("reCAPTCHA request creation failed: %v", err)
 		return false, err
 	}
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
+	debugLog("Sending request to reCAPTCHA API")
+
 	resp, err := r.client.Do(req)
 	if err != nil {
+		debugLog("reCAPTCHA API request failed: %v", err)
 		return false, err
 	}
 	defer resp.Body.Close()
 
 	var result RecaptchaResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		debugLog("Failed to decode reCAPTCHA response: %v", err)
 		return false, err
 	}
 
 	// Log detailed response for debugging
-	log.Printf("reCAPTCHA response: Success=%t, Score=%.2f, Action=%s, Hostname=%s, ErrorCodes=%v",
-		result.Success, result.Score, result.Action, result.Hostname, result.ErrorCodes)
+	if debugEnabled {
+		log.Printf("[DEBUG] reCAPTCHA response: Success=%t, Score=%.2f, Action=%s, Hostname=%s, ErrorCodes=%v",
+			result.Success, result.Score, result.Action, result.Hostname, result.ErrorCodes)
+	} else {
+		log.Printf("reCAPTCHA response: Success=%t, Score=%.2f, Action=%s, Hostname=%s, ErrorCodes=%v",
+			result.Success, result.Score, result.Action, result.Hostname, result.ErrorCodes)
+	}
 
 	// Additional debugging for your specific case
 	if result.Score == 0.0 {
 		if len(result.ErrorCodes) > 0 {
-			log.Printf("reCAPTCHA debugging: Score is 0.0 with errors - this suggests a configuration issue")
+			debugLog("reCAPTCHA score is 0.0 with errors - this suggests a configuration issue")
 		} else {
-			log.Printf("reCAPTCHA debugging: Score is 0.0 with no errors - this might be reCAPTCHA v2 or a site key mismatch")
+			debugLog("reCAPTCHA score is 0.0 with no errors - this might be reCAPTCHA v2 or a site key mismatch")
 		}
 	}
 
 	// Check if basic verification succeeded first
 	if !result.Success {
+		debugLog("reCAPTCHA verification failed with errors: %v", result.ErrorCodes)
 		return false, fmt.Errorf("reCAPTCHA verification failed: %v", result.ErrorCodes)
 	}
 
 	// For reCAPTCHA v2, score will be 0.0 and that's ok
 	if result.Score == 0.0 {
-		log.Printf("reCAPTCHA v2 response detected (score=0.0), accepting based on success=true")
+		debugLog("reCAPTCHA v2 response detected (score=0.0), accepting based on success=true")
 		return true, nil
 	}
 
 	// For reCAPTCHA v3, check the score
 	if result.Score < r.scoreThreshold {
+		debugLog("reCAPTCHA score too low: %.2f (minimum: %.2f)", result.Score, r.scoreThreshold)
 		return false, fmt.Errorf("reCAPTCHA score too low: %.2f (minimum: %.2f)", result.Score, r.scoreThreshold)
 	}
 
+	debugLog("reCAPTCHA verification successful: score=%.2f, threshold=%.2f", result.Score, r.scoreThreshold)
 	return true, nil
 }

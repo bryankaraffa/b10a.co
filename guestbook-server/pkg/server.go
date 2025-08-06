@@ -5,12 +5,20 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
 )
+
+// Debug logging function for server
+func serverDebugLog(format string, args ...interface{}) {
+	if os.Getenv("DEBUG") == "true" {
+		log.Printf("[DEBUG] "+format, args...)
+	}
+}
 
 // GitHubClientInterface defines the interface for GitHub operations
 type GitHubClientInterface interface {
@@ -139,7 +147,7 @@ func (s *Server) handleRecaptchaDebug(c *gin.Context) {
 		return
 	}
 
-	log.Printf("DEBUG: Testing reCAPTCHA token from IP: %s", c.ClientIP())
+	serverDebugLog("Testing reCAPTCHA token from IP: %s", c.ClientIP())
 	valid, err := s.recaptcha.Verify(c.Request.Context(), req.RecaptchaResponse, c.ClientIP())
 
 	response := gin.H{
@@ -159,25 +167,26 @@ func (s *Server) handleRecaptchaDebug(c *gin.Context) {
 func (s *Server) handleGuestbookSubmission(c *gin.Context) {
 	var req GuestbookRequest
 
-	log.Printf("Received guestbook submission from IP: %s", c.ClientIP())
+	serverDebugLog("Received guestbook submission from IP: %s, User-Agent: %s", c.ClientIP(), c.Request.UserAgent())
 
 	// Try to bind based on content type
 	contentType := c.GetHeader("Content-Type")
+	serverDebugLog("Request content type: %s", contentType)
 	if strings.Contains(contentType, "application/json") {
 		if err := c.ShouldBindJSON(&req); err != nil {
-			log.Printf("Failed to bind JSON: %v", err)
+			serverDebugLog("Failed to bind JSON: %v", err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON format"})
 			return
 		}
 	} else {
 		if err := c.ShouldBind(&req); err != nil {
-			log.Printf("Failed to bind form data: %v", err)
+			serverDebugLog("Failed to bind form data: %v", err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
 			return
 		}
 	}
 
-	log.Printf("Parsed request - Name: %s, Message length: %d, RecaptchaResponse present: %t",
+	serverDebugLog("Parsed request - Name: %s, Message length: %d, RecaptchaResponse present: %t",
 		req.Name, len(req.Message), req.RecaptchaResponse != "")
 
 	// Validate required fields
@@ -188,19 +197,20 @@ func (s *Server) handleGuestbookSubmission(c *gin.Context) {
 
 	// Check honeypot field (if present, it's likely a bot)
 	if req.Honeypot != "" {
+		serverDebugLog("Honeypot field detected from IP: %s, silently rejecting", c.ClientIP())
 		c.JSON(http.StatusOK, gin.H{"message": "Thank you for your submission"})
 		return
 	}
 
 	// Verify reCAPTCHA
 	if req.RecaptchaResponse != "" {
-		log.Printf("Verifying reCAPTCHA for IP: %s, Response length: %d", c.ClientIP(), len(req.RecaptchaResponse))
+		serverDebugLog("Verifying reCAPTCHA for IP: %s, Response length: %d", c.ClientIP(), len(req.RecaptchaResponse))
 		if s.recaptcha == nil {
-			log.Printf("Warning: reCAPTCHA client is nil, skipping verification")
+			serverDebugLog("Warning: reCAPTCHA client is nil, skipping verification")
 		} else {
 			valid, err := s.recaptcha.Verify(c.Request.Context(), req.RecaptchaResponse, c.ClientIP())
 			if err != nil {
-				log.Printf("reCAPTCHA verification error: %v", err)
+				serverDebugLog("reCAPTCHA verification error: %v", err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification failed", "details": err.Error()})
 				// Log the error for debugging
 				c.Errors = append(c.Errors, &gin.Error{
@@ -210,7 +220,7 @@ func (s *Server) handleGuestbookSubmission(c *gin.Context) {
 				return
 			}
 			if !valid {
-				log.Printf("reCAPTCHA verification failed: response was valid but score/success check failed for IP: %s", c.ClientIP())
+				serverDebugLog("reCAPTCHA verification failed: response was valid but score/success check failed for IP: %s", c.ClientIP())
 				c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification failed", "details": "Invalid reCAPTCHA response"})
 				// Log the error for debugging
 				c.Errors = append(c.Errors, &gin.Error{
@@ -219,14 +229,15 @@ func (s *Server) handleGuestbookSubmission(c *gin.Context) {
 				})
 				return
 			}
-			log.Printf("reCAPTCHA verification successful for IP: %s", c.ClientIP())
+			serverDebugLog("reCAPTCHA verification successful for IP: %s", c.ClientIP())
 		}
 	} else {
-		log.Printf("No reCAPTCHA response provided")
+		serverDebugLog("No reCAPTCHA response provided")
 	}
 
 	// Check for spam using Akismet
 	if s.akismet != nil {
+		serverDebugLog("Starting Akismet spam check for submission from %s", req.Name)
 		isSpam, err := s.akismet.CheckSpam(c.Request.Context(), AkismetComment{
 			UserIP:         c.ClientIP(),
 			UserAgent:      c.Request.UserAgent(),
@@ -236,27 +247,42 @@ func (s *Server) handleGuestbookSubmission(c *gin.Context) {
 			CommentContent: req.Message,
 		})
 		if err != nil {
+			serverDebugLog("Akismet check failed with error: %v", err)
 			fmt.Printf("Akismet error: %v\n", err)
 		} else if isSpam {
+			serverDebugLog("Akismet detected spam from %s (IP: %s), silently rejecting", req.Name, c.ClientIP())
 			c.JSON(http.StatusOK, gin.H{"message": "Thank you for your submission"})
 			return
+		} else {
+			serverDebugLog("Akismet check passed for %s (IP: %s)", req.Name, c.ClientIP())
 		}
+	} else {
+		serverDebugLog("Akismet client not configured, skipping spam check")
 	}
 
 	// Additional AI-based spam detection
+	serverDebugLog("Running additional spam heuristics for %s", req.Name)
 	if s.isLikelySpam(req) {
+		serverDebugLog("Custom spam heuristics detected spam from %s (IP: %s), silently rejecting", req.Name, c.ClientIP())
 		c.JSON(http.StatusOK, gin.H{"message": "Thank you for your submission"})
 		return
+	} else {
+		serverDebugLog("Custom spam heuristics passed for %s", req.Name)
 	}
 
 	// Create pull request with the guestbook entry
+	serverDebugLog("All spam checks passed, creating GitHub pull request for %s", req.Name)
 	if err := s.github.CreateGuestbookEntry(c.Request.Context(), req); err != nil {
+		serverDebugLog("Failed to create GitHub pull request for %s: %v", req.Name, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to submit entry"})
 		return
 	}
 
+	serverDebugLog("Successfully created GitHub pull request for guestbook entry from %s", req.Name)
+
 	// Redirect or return success
 	if req.Redirect != "" {
+		serverDebugLog("Redirecting to: %s", req.Redirect)
 		c.Redirect(http.StatusFound, req.Redirect)
 	} else {
 		c.JSON(http.StatusOK, gin.H{"message": "Thank you for your submission! It will be reviewed before being published."})
@@ -274,17 +300,20 @@ func (s *Server) isLikelySpam(req GuestbookRequest) bool {
 	content := req.Name + " " + req.Message
 	for _, pattern := range suspiciousPatterns {
 		if strings.Contains(content, pattern) {
+			serverDebugLog("Suspicious pattern detected: '%s' in content from %s", pattern, req.Name)
 			return true
 		}
 	}
 
 	// Check for excessive length
 	if len(req.Message) > 1000 {
+		serverDebugLog("Message too long (%d chars) from %s, flagging as spam", len(req.Message), req.Name)
 		return true
 	}
 
 	// Check for repetitive content
 	if isRepetitive(req.Message) {
+		serverDebugLog("Repetitive content detected from %s, flagging as spam", req.Name)
 		return true
 	}
 

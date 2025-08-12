@@ -1,0 +1,7 @@
+{{/* Recent posts shortcode - displays recent posts dynamically */}}
+{{ $limit := .Get "limit" | default 3 }}
+{{ $pages := where site.RegularPages "Type" "posts" }}
+{{ $pages = $pages.ByDate.Reverse | first $limit }}
+{{ range $pages }}
+- [{{ .Title }}]({{ .Permalink }})
+{{ end }}

@@ -1,0 +1,75 @@
+{{ if .IsPage }}
+<div class="social-share" style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+  <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 1rem;">Share this post:</h4>
+  <div class="share-buttons" style="display: flex; gap: 10px; flex-wrap: wrap;">
+    
+    <!-- Twitter/X Share -->
+    <a href="https://twitter.com/intent/tweet?text={{ .Title | htmlEscape }}&url={{ .Permalink }}&via=bryankaraffa" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       style="background: #1da1f2; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9rem;">
+      🐦 Twitter
+    </a>
+    
+    <!-- LinkedIn Share -->
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ .Permalink }}" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       style="background: #0077b5; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9rem;">
+      💼 LinkedIn
+    </a>
+    
+    <!-- Reddit Share -->
+    <a href="https://reddit.com/submit?url={{ .Permalink }}&title={{ .Title | htmlEscape }}" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       style="background: #ff4500; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9rem;">
+      📱 Reddit
+    </a>
+    
+    <!-- Hacker News Share -->
+    <a href="https://news.ycombinator.com/submitlink?u={{ .Permalink }}&t={{ .Title | htmlEscape }}" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       style="background: #ff6600; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9rem;">
+      🔥 HN
+    </a>
+    
+    <!-- Email Share -->
+    <a href="mailto:?subject={{ .Title | htmlEscape }}&body=Check out this post: {{ .Permalink }}" 
+       style="background: #555; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9rem;">
+      ✉️ Email
+    </a>
+    
+    <!-- Copy Link -->
+    <button onclick="copyToClipboard('{{ .Permalink }}')" 
+            style="background: #6c757d; color: white; padding: 8px 12px; border-radius: 4px; border: none; cursor: pointer; font-size: 0.9rem;">
+      🔗 Copy
+    </button>
+  </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      alert('Link copied to clipboard!');
+    });
+  } else {
+    // Fallback for older browsers
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      alert('Link copied to clipboard!');
+    } catch (err) {
+      console.error('Unable to copy to clipboard', err);
+    }
+    document.body.removeChild(textArea);
+  }
+}
+</script>
+{{ end }}

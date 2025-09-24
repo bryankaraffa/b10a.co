@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Allow search engines to crawl everything
+# Sitemap location
+Sitemap: https://b10a.co/sitemap.xml
+
+# Be respectful with crawling
+Crawl-delay: 1

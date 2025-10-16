@@ -242,6 +242,15 @@ func (m *MockGitHubClient) CreateGuestbookEntry(ctx context.Context, req Guestbo
 	return nil
 }
 
+// MockRecaptchaVerifier implements RecaptchaVerifier for testing
+type MockRecaptchaVerifier struct {
+	shouldVerify bool
+}
+
+func (m *MockRecaptchaVerifier) Verify(ctx context.Context, response, remoteIP string) (bool, error) {
+	return m.shouldVerify, nil
+}
+
 func TestGuestbookSubmission_Success(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
@@ -257,11 +266,14 @@ func TestGuestbookSubmission_Success(t *testing.T) {
 	server := New(config)
 	// Replace with mock for testing
 	server.github = &MockGitHubClient{shouldFail: false}
+	// Mock reCAPTCHA verification for test
+	server.recaptcha = &MockRecaptchaVerifier{shouldVerify: true}
 
 	payload := map[string]string{
-		"name":     "Test User",
-		"message":  "This is a test message",
-		"redirect": "https://example.com/success",
+		"name":                 "Test User",
+		"message":              "This is a test message",
+		"redirect":             "https://example.com/success",
+		"g-recaptcha-response": "mock-response",
 	}
 	jsonData, _ := json.Marshal(payload)
 

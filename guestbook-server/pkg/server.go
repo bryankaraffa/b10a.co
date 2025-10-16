@@ -45,13 +45,17 @@ type Config struct {
 	RateLimitWindow         int
 }
 
+type RecaptchaVerifier interface {
+	Verify(ctx context.Context, response, remoteIP string) (bool, error)
+}
+
 type Server struct {
 	config         *Config
 	router         *gin.Engine
 	ipRateLimiters map[string]*rate.Limiter
 	mu             *sync.Mutex
 	akismet        *AkismetClient
-	recaptcha      *RecaptchaClient
+	recaptcha      RecaptchaVerifier
 	github         GitHubClientInterface
 }
 

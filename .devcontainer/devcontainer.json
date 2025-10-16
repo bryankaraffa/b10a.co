@@ -12,11 +12,20 @@
 		// GitHub CLI
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		// Docker-in-Docker
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": false
+    }
 	},
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "bash -c 'curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash'"
+	"postCreateCommand": "bash -c 'curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash'",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"EditorConfig.EditorConfig"
+			]
+		}
+	}
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],

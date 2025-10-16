@@ -210,38 +210,42 @@ func (s *Server) handleGuestbookSubmission(c *gin.Context) {
 		return
 	}
 
-	// Verify reCAPTCHA
-	if req.RecaptchaResponse != "" {
-		serverDebugLog("Verifying reCAPTCHA for IP: %s, Response length: %d", c.ClientIP(), len(req.RecaptchaResponse))
-		if s.recaptcha == nil {
-			serverDebugLog("Warning: reCAPTCHA client is nil, skipping verification")
-		} else {
-			valid, err := s.recaptcha.Verify(c.Request.Context(), req.RecaptchaResponse, c.ClientIP())
-			if err != nil {
-				serverDebugLog("reCAPTCHA verification error: %v", err)
-				c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification failed", "details": err.Error()})
-				// Log the error for debugging
-				c.Errors = append(c.Errors, &gin.Error{
-					Err:  fmt.Errorf("reCAPTCHA verification failed: %v", err),
-					Type: gin.ErrorTypePublic,
-				})
-				return
-			}
-			if !valid {
-				serverDebugLog("reCAPTCHA verification failed: response was valid but score/success check failed for IP: %s", c.ClientIP())
-				c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification failed", "details": "Invalid reCAPTCHA response"})
-				// Log the error for debugging
-				c.Errors = append(c.Errors, &gin.Error{
-					Err:  fmt.Errorf("reCAPTCHA verification failed: invalid response"),
-					Type: gin.ErrorTypePublic,
-				})
-				return
-			}
-			serverDebugLog("reCAPTCHA verification successful for IP: %s", c.ClientIP())
-		}
-	} else {
-		serverDebugLog("No reCAPTCHA response provided")
+	// Verify reCAPTCHA (required)
+	if req.RecaptchaResponse == "" {
+		serverDebugLog("No reCAPTCHA response provided from IP: %s", c.ClientIP())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification is required"})
+		return
 	}
+
+	serverDebugLog("Verifying reCAPTCHA for IP: %s, Response length: %d", c.ClientIP(), len(req.RecaptchaResponse))
+	if s.recaptcha == nil {
+		serverDebugLog("reCAPTCHA client is nil, rejecting submission")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA client is nil"})
+		return
+	}
+
+	valid, err := s.recaptcha.Verify(c.Request.Context(), req.RecaptchaResponse, c.ClientIP())
+	if err != nil {
+		serverDebugLog("reCAPTCHA verification error: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification failed", "details": err.Error()})
+		// Log the error for debugging
+		c.Errors = append(c.Errors, &gin.Error{
+			Err:  fmt.Errorf("reCAPTCHA verification failed: %v", err),
+			Type: gin.ErrorTypePublic,
+		})
+		return
+	}
+	if !valid {
+		serverDebugLog("reCAPTCHA verification failed: response was valid but score/success check failed for IP: %s", c.ClientIP())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "reCAPTCHA verification failed", "details": "Invalid reCAPTCHA response"})
+		// Log the error for debugging
+		c.Errors = append(c.Errors, &gin.Error{
+			Err:  fmt.Errorf("reCAPTCHA verification failed: invalid response"),
+			Type: gin.ErrorTypePublic,
+		})
+		return
+	}
+	serverDebugLog("reCAPTCHA verification successful for IP: %s", c.ClientIP())
 
 	// Check for spam using Akismet
 	if s.akismet != nil {

@@ -22,3 +22,5 @@ hugo.linux
 
 # Go binary
 /bin/
+# Drafts
+drafts/

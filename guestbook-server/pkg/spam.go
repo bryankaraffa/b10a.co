@@ -194,7 +194,7 @@ func (r *RecaptchaClient) Verify(ctx context.Context, response, remoteIP string)
 		if len(result.ErrorCodes) > 0 {
 			debugLog("reCAPTCHA score is 0.0 with errors - this suggests a configuration issue")
 		} else {
-			debugLog("reCAPTCHA score is 0.0 with no errors - this might be reCAPTCHA v2 or a site key mismatch")
+      return false, fmt.Errorf("reCAPTCHA score is 0.0 with no errors - this might be reCAPTCHA v2 on the frontend or a site key mismatch. Considering Spam to be safe.")
 		}
 	}
 
@@ -204,10 +204,10 @@ func (r *RecaptchaClient) Verify(ctx context.Context, response, remoteIP string)
 		return false, fmt.Errorf("reCAPTCHA verification failed: %v", result.ErrorCodes)
 	}
 
-	// For reCAPTCHA v2, score will be 0.0 and that's ok
-	if result.Score == 0.0 {
-		debugLog("reCAPTCHA v2 response detected (score=0.0), accepting based on success=true")
-		return true, nil
+	// Verify the action name
+	if result.Action != "submit" {
+		debugLog("reCAPTCHA action mismatch: expected 'submit', got '%s'", result.Action)
+		return false, fmt.Errorf("reCAPTCHA action mismatch: expected 'submit', got '%s'", result.Action)
 	}
 
 	// For reCAPTCHA v3, check the score

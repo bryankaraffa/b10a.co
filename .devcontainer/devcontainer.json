@@ -12,7 +12,7 @@
 		// GitHub CLI
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		// Docker-in-Docker
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+		"ghcr.io/devcontainers/features/docker-in-docker:4": {
       "moby": false
     }
 	},
